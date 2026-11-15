@@ -26,13 +26,23 @@ st.set_page_config(page_title="Astra", page_icon=LOGO, layout="wide",
 
 # --- İnternetteki (bulut) sürüm: her ziyaretçiye ayrı veritabanı ---
 # Streamlit Cloud'un gizli ayarlarında  bulut_modu = true  yazıyorsa açılır.
-# Kimlik adres çubuğuna (?k=...) eklenir; sayfa yenilense de aynı kişi aynı verisini görür.
+# Kimlik hem oturum hafızasında hem adres çubuğunda (?k=...) tutulur:
+#  - sayfa değiştirince Streamlit adresteki ?k= bilgisini siler -> oturum hafızasından geri yazılır
+#  - tarayıcıda sayfa yenilenince oturum hafızası sıfırlanır -> adresteki ?k= ile aynı kişi tanınır
 if veritabani.gizli_ayar("bulut_modu", False):
     import re
     import uuid
-    kimlik = st.query_params.get("k", "")
-    if not re.fullmatch(r"[a-f0-9]{12}", kimlik or ""):
+
+    def _gecerli(k):
+        return bool(re.fullmatch(r"[a-f0-9]{12}", k or ""))
+
+    kimlik = st.session_state.get("kullanici_kimligi")
+    if not _gecerli(kimlik):
+        kimlik = st.query_params.get("k", "")
+    if not _gecerli(kimlik):
         kimlik = uuid.uuid4().hex[:12]
+    st.session_state["kullanici_kimligi"] = kimlik
+    if st.query_params.get("k") != kimlik:
         st.query_params["k"] = kimlik
     veritabani.kullanici_klasorunu_ayarla(kimlik)
 
