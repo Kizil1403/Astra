@@ -3,7 +3,7 @@ GRAFİKLER — Geçmiş ve yeni değerler. Seçilen günün grafiği, son 14 gü
 Sayfa her gün yeni verilerle kendiliğinden güncellenir.
 """
 import io
-from datetime import date
+from datetime import date, datetime
 
 import pandas as pd
 
@@ -17,6 +17,17 @@ import saglik_motoru
 import veritabani
 from arayuz import html
 from ceviri import t, tx
+
+def yerel_saat_farki() -> pd.Timedelta:
+    """Tarayıcının saati ile sunucunun saati arasındaki fark (bilgisayarda çalışırken 0)."""
+    try:
+        from zoneinfo import ZoneInfo
+        dilim = ZoneInfo(getattr(st.context, "timezone", None) or "Europe/Istanbul")
+        fark = datetime.now(dilim).replace(tzinfo=None) - datetime.now()
+        return pd.Timedelta(minutes=round(fark.total_seconds() / 60))
+    except Exception:
+        return pd.Timedelta(0)
+
 
 arayuz.sayfa_basligi(t("grafik_ust"), t("grafik_baslik"), t("grafik_alt"))
 
@@ -64,7 +75,16 @@ def gun_paneli():
         arayuz.bolum_basligi(tx(m["ad"]).upper(), t("gun_grafigi_baslik", birim=birim))
         html(f'<div class="gri">{t("normal")}: {saglik_motoru.normal_aralik_yazisi(kod)} {birim} · '
              f'{t("olcum_sayisi")}: {len(df)}</div>')
-        st.plotly_chart(grafikler.trend_grafigi(df, kod, None, birim, yukseklik=320),
+        # Yatay eksen: saatler kullanıcının yerel saatine göre (internetteki sunucu UTC'de çalışır).
+        # Bugünün grafiği şu andan 1 saat önce başlar, şu anda biter.
+        kayma = yerel_saat_farki()
+        df = df.assign(zaman=df["zaman"] + kayma)
+        if secili_gun == bugun:
+            simdi = pd.Timestamp(datetime.now()) + kayma
+            x_aralik = (simdi - pd.Timedelta(hours=1), simdi + pd.Timedelta(minutes=2))
+        else:
+            x_aralik = (df["zaman"].min() - pd.Timedelta(minutes=15), df["zaman"].max() + pd.Timedelta(minutes=15))
+        st.plotly_chart(grafikler.trend_grafigi(df, kod, None, birim, yukseklik=320, x_aralik=x_aralik),
                         config={"displayModeBar": False}, key="gun_grafigi")
 
 
