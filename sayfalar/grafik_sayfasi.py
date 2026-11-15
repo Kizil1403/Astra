@@ -94,8 +94,17 @@ with st.container(border=True):
     arayuz.bolum_basligi(t("saatlik_ust"), t("saatlik_baslik"))
     saatlik = veritabani.saatlik_ortalamalar(secili_gun)
     if len(saatlik) >= 1:
+        # Saatler yerel saate çevrilir (sunucu UTC'de). Bugünse 00:00'dan şu anki saate kadar,
+        # geçmiş günse 24 saatin hepsi eksende görünür; ölçüm olmayan saatler boş kalır.
+        kayma_saat = round(yerel_saat_farki().total_seconds() / 3600)
+        saatlik = saatlik.assign(saat=[f"{(int(s[:2]) + kayma_saat) % 24:02d}:00" for s in saatlik["saat"]])
+        saatlik = saatlik.groupby("saat", as_index=False).mean(numeric_only=True)
+        son_saat = (datetime.now() + yerel_saat_farki()).hour if secili_gun == bugun else 23
+        son_saat = max(son_saat, *[int(s[:2]) for s in saatlik["saat"]])
+        tum_saatler = [f"{h:02d}:00" for h in range(son_saat + 1)]
         st.plotly_chart(grafikler.saatlik_ortalama_grafigi(saatlik, kod, birim, saglik_motoru.durum_bul,
-                                                           t("uyari_cizgi"), t("kritik_cizgi")),
+                                                           t("uyari_cizgi"), t("kritik_cizgi"),
+                                                           tum_saatler=tum_saatler),
                         config={"displayModeBar": False}, key="saatlik_grafik")
         st.caption(t("renk_aciklama_saatlik"))
     else:
