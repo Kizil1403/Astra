@@ -47,8 +47,9 @@ def _y_araligi(degerler, alt, ust):
     return [y_min, y_max]
 
 
-def trend_grafigi(df, kod: str, baslik: str, birim: str, yukseklik: int = 260):
-    """Bir değerin zaman içindeki değişimi. Yeşil bant = normal aralık."""
+def trend_grafigi(df, kod: str, baslik: str, birim: str, yukseklik: int = 260, x_aralik=None):
+    """Bir değerin zaman içindeki değişimi. Yeşil bant = normal aralık.
+    x_aralik verilirse yatay eksen o saatler arasını gösterir (saat:dakika olarak)."""
     alt, ust = ayarlar.METRIKLER[kod]["yesil"]
     fig = go.Figure()
     fig.add_hrect(y0=alt, y1=ust, fillcolor=ayarlar.RENKLER["yesil"], opacity=0.08, line_width=0)
@@ -58,7 +59,10 @@ def trend_grafigi(df, kod: str, baslik: str, birim: str, yukseklik: int = 260):
         hovertemplate="%{x|%d.%m %H:%M}<br>%{y} " + birim + "<extra></extra>",
     ))
     fig.update_yaxes(range=_y_araligi(df[kod], alt, ust))
-    return _stil(fig, yukseklik, baslik)
+    fig = _stil(fig, yukseklik, baslik)
+    if x_aralik:
+        fig.update_xaxes(range=list(x_aralik), tickformat="%H:%M")
+    return fig
 
 
 def gunluk_ortalama_grafigi(df, kod: str, baslik: str, birim: str, durum_bul):
