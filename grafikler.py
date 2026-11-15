@@ -2,6 +2,7 @@
 GRAFİKLER — Monitör tarzı grafikler (Plotly).
 """
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 
 import ayarlar
@@ -139,9 +140,13 @@ def puan_grafigi(df):
     return _stil(fig, 220)
 
 
-def saatlik_ortalama_grafigi(df, kod: str, birim: str, durum_bul, etiket_uyari: str, etiket_kritik: str):
-    """Seçilen günün saatlik ortalamaları: her çubuk durumuna göre renkli, Uyarı/Kritik çizgileriyle."""
-    renkler = [ayarlar.RENKLER[durum_bul(kod, v)] for v in df[kod]]
+def saatlik_ortalama_grafigi(df, kod: str, birim: str, durum_bul, etiket_uyari: str, etiket_kritik: str,
+                             tum_saatler=None):
+    """Seçilen günün saatlik ortalamaları: her çubuk durumuna göre renkli, Uyarı/Kritik çizgileriyle.
+    tum_saatler verilirse ölçüm olmayan saatler de eksende boş yer olarak görünür."""
+    if tum_saatler:
+        df = df.set_index("saat").reindex(tum_saatler).reset_index().rename(columns={"index": "saat"})
+    renkler = [ayarlar.RENKLER[durum_bul(kod, v)] if pd.notna(v) else "rgba(0,0,0,0)" for v in df[kod]]
     fig = go.Figure(go.Bar(
         x=df["saat"], y=df[kod], marker_color=renkler, marker_line_width=0,
         hovertemplate="%{x}<br>%{y:.1f} " + birim + "<extra></extra>",
@@ -150,10 +155,11 @@ def saatlik_ortalama_grafigi(df, kod: str, birim: str, durum_bul, etiket_uyari: 
     for deger, etiket, renk, tip in cizgiler:
         fig.add_hline(y=deger, line_dash=tip, line_color=renk, line_width=1.2, opacity=0.85,
                       annotation_text=etiket, annotation_position="right", annotation_font=dict(color=renk, size=11))
-    tum = list(df[kod]) + [c[0] for c in cizgiler]
+    tum = list(df[kod].dropna()) + [c[0] for c in cizgiler]
     pay = (max(tum) - min(tum)) * 0.12 or 1
     fig.update_yaxes(range=[max(0, min(tum) - pay), max(tum) + pay])
-    fig.update_xaxes(type="category", tickangle=0)
+    fig.update_xaxes(type="category", tickangle=0,
+                     categoryorder="array", categoryarray=list(df["saat"]))
     fig.update_layout(bargap=0.3)
     fig = _stil(fig, 280)
     fig.update_layout(margin=dict(l=8, r=60, t=10, b=8))
