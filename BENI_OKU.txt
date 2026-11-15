@@ -1,0 +1,30 @@
+﻿ASTRA - Mürettebat Sağlık Sistemi
+=================================
+
+AÇMAK
+  1. Bilgisayarda Python kurulu olmalı (python.org).
+     Kurulumda "Add python.exe to PATH" kutusunu işaretleyin.
+  2. ASTRA_baslat.bat dosyasına çift tıklayın.
+     İlk açılışta gerekli paketler bir kez yüklenir (internet gerekir, birkaç dakika sürer).
+     Uygulama tarayıcıda kendiliğinden açılır.
+  3. İsterseniz masaustu_kisayolu_olustur.bat ile masaüstüne logolu ASTRA kısayolu ekleyin.
+
+KAPATMAK
+  Siyah komut penceresini kapatın.
+
+YAPAY ZEKA (POLARIS)
+  Ayarlar > Yapay zeka bölümüne kendi Gemini API anahtarınızı girin (aistudio.google.com).
+
+VERİLER
+  Tüm veriler bu klasördeki astronot_saglik.db dosyasında tutulur.
+  Ses ve video kayıtları "kayitlar" klasöründedir.
+
+PAYLAŞMADAN ÖNCE
+  paylasim_icin_temizle.bat dosyasını çalıştırın. Böylece kendi profiliniz,
+  ölçümleriniz, günlüğünüz ve Gemini anahtarınız paylaşılan dosyada yer almaz.
+
+PYTHON'U OLMAYANLAR İÇİN (Windows uygulaması / .exe)
+  1. Python'un kurulu olduğu bir bilgisayarda exe_olustur.bat dosyasına çift tıklayın.
+  2. İşlem bitince "dist\ASTRA" klasörü açılır; içinde ASTRA.exe vardır.
+  3. "dist\ASTRA" klasörünün tamamını zip yapıp paylaşın.
+     Karşı taraf zip'i açıp ASTRA.exe'ye çift tıklar; Python gerekmez.

@@ -1,0 +1,22 @@
+﻿ASTRA - Mürettebat Sağlık Sistemi (Windows uygulaması)
+=====================================================
+
+AÇMAK
+  ASTRA.exe dosyasına çift tıklayın. Python kurmanıza gerek yoktur.
+  Uygulama birkaç saniye içinde tarayıcınızda açılır.
+  Siyah pencere açık kaldığı sürece uygulama çalışır; kapatmak için o pencereyi kapatın.
+
+İLK AÇILIŞTA
+  Windows "bilgisayarınızı korudu" uyarısı verirse "Ek bilgi" > "Yine de çalıştır" deyin.
+  Güvenlik duvarı izin isterse "İzin ver" deyin (uygulama yalnızca bu bilgisayarda çalışır).
+
+ÖNEMLİ
+  ASTRA.exe'yi tek başına başka bir yere taşımayın; yanındaki "_internal" klasörü ile
+  birlikte durmalıdır. Masaüstüne kısayol için: ASTRA.exe'ye sağ tık > Masaüstüne kısayol gönder.
+
+VERİLERİNİZ
+  Profiliniz, ölçümleriniz ve kayıtlarınız "ASTRA_veri" klasöründe tutulur.
+
+YAPAY ZEKA (POLARIS)
+  Ayarlar > Yapay zeka bölümüne kendi Gemini API anahtarınızı girin (aistudio.google.com).
+  Polaris ve otomatik dil çevirisi internet gerektirir; diğer her şey internetsiz çalışır.

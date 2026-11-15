@@ -1,0 +1,11 @@
+astronot_saglik.db
+kayitlar/
+kullanicilar/
+.kurulum_tamam
+__pycache__/
+.streamlit/secrets.toml
+build/
+dist/
+ASTRA.spec
+exe_olusturma_kaydi.txt
+ASTRA_veri/

@@ -1,0 +1,7 @@
+streamlit>=1.43
+pandas
+plotly
+numpy
+openpyxl
+google-genai>=1.0
+deep-translator
