@@ -421,7 +421,7 @@ function guncelle() {{
   document.getElementById('saat').textContent = iki(s.getHours()) + ':' + iki(s.getMinutes()) + ':' + iki(s.getSeconds());
   document.getElementById('utc').textContent = 'UTC ' + iki(s.getUTCHours()) + ':' + iki(s.getUTCMinutes());
 }}
-guncelle(); if (!DURAKLADI) setInterval(guncelle, 1000);
+guncelle(); setInterval(guncelle, 1000);
 </script>"""
 
 
@@ -449,7 +449,7 @@ function guncelle() {{
   document.getElementById('utc').textContent = 'UTC ' + iki(s.getUTCHours()) + ':' + iki(s.getUTCMinutes());
   document.getElementById('tarih').textContent = iki(s.getDate()) + '.' + iki(s.getMonth() + 1) + '.' + s.getFullYear();
 }}
-guncelle(); if (!DURAKLADI) setInterval(guncelle, 1000);
+guncelle(); setInterval(guncelle, 1000);
 </script>"""
 
 
